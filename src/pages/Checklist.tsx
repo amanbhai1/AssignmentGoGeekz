@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
   CheckCircle,
@@ -26,6 +27,10 @@ import {
   GraduationCap,
   Download,
   Printer,
+  Search,
+  Filter,
+  Target,
+  Award,
 } from "lucide-react";
 
 interface ChecklistItem {
@@ -40,6 +45,7 @@ interface ChecklistItem {
   icon: any;
   dependencies?: string[];
   resources?: string[];
+  notes?: string;
 }
 
 const Checklist = () => {
@@ -59,6 +65,7 @@ const Checklist = () => {
         "CELPIP test centers",
         "Language preparation courses",
       ],
+      notes: "IELTS Academic required for immigration purposes",
     },
     {
       id: "2",
@@ -71,6 +78,7 @@ const Checklist = () => {
       estimatedTime: "6-8 weeks",
       icon: GraduationCap,
       resources: ["WES Canada", "ICAS", "IQAS"],
+      notes: "WES is most commonly used and faster",
     },
     {
       id: "3",
@@ -87,6 +95,7 @@ const Checklist = () => {
         "Contact HR departments",
         "Format according to IRCC requirements",
       ],
+      notes: "Letters must be on company letterhead with specific details",
     },
     {
       id: "4",
@@ -99,6 +108,7 @@ const Checklist = () => {
       estimatedTime: "1-2 hours",
       icon: Users,
       dependencies: ["1", "2", "3"],
+      notes: "Profile expires after 12 months if no ITA received",
     },
     {
       id: "5",
@@ -111,6 +121,8 @@ const Checklist = () => {
       estimatedTime: "4-12 weeks",
       icon: Shield,
       resources: ["Country-specific requirements", "Embassy contacts"],
+      notes:
+        "Required for all countries where you lived for 6+ months since age 18",
     },
     {
       id: "6",
@@ -123,6 +135,7 @@ const Checklist = () => {
       estimatedTime: "1-2 weeks",
       icon: Stethoscope,
       dependencies: ["Receive Invitation to Apply (ITA)"],
+      notes: "Only required after receiving ITA",
     },
     {
       id: "7",
@@ -139,6 +152,7 @@ const Checklist = () => {
         "Investment portfolio",
         "Gift deed (if applicable)",
       ],
+      notes: "$13,310 CAD required for single applicant",
     },
     {
       id: "8",
@@ -150,6 +164,7 @@ const Checklist = () => {
       isRequired: true,
       estimatedTime: "1-2 days",
       icon: FileText,
+      notes: "Passport must be valid for at least 6 months",
     },
     {
       id: "9",
@@ -162,6 +177,7 @@ const Checklist = () => {
       isRequired: true,
       estimatedTime: "1-2 weeks",
       icon: FileText,
+      notes: "Must be long-form birth certificate",
     },
     {
       id: "10",
@@ -173,6 +189,7 @@ const Checklist = () => {
       isRequired: false,
       estimatedTime: "1 week",
       icon: Users,
+      notes: "Required if including spouse in application",
     },
     {
       id: "11",
@@ -184,6 +201,7 @@ const Checklist = () => {
       isRequired: true,
       estimatedTime: "1 day",
       icon: FileText,
+      notes: "35mm x 45mm, high resolution, plain background",
     },
     {
       id: "12",
@@ -195,8 +213,13 @@ const Checklist = () => {
       isRequired: true,
       estimatedTime: "2-3 hours",
       icon: Globe,
+      notes: "Include all international travel with exact dates",
     },
   ]);
+
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const toggleItemStatus = (itemId: string) => {
     setItems((prev) =>
@@ -217,6 +240,7 @@ const Checklist = () => {
   };
 
   const categories = Array.from(new Set(items.map((item) => item.category)));
+  const statuses = ["all", "completed", "in-progress", "pending"];
 
   const getCompletionStats = () => {
     const completed = items.filter(
@@ -241,26 +265,47 @@ const Checklist = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
-        return <Badge className="bg-green-100 text-green-800">Completed</Badge>;
+        return (
+          <Badge className="bg-green-100 text-green-800 border-green-200">
+            Completed
+          </Badge>
+        );
       case "in-progress":
         return (
-          <Badge className="bg-orange-100 text-orange-800">In Progress</Badge>
+          <Badge className="bg-orange-100 text-orange-800 border-orange-200">
+            In Progress
+          </Badge>
         );
       default:
-        return <Badge className="bg-gray-100 text-gray-800">Pending</Badge>;
+        return (
+          <Badge className="bg-gray-100 text-gray-800 border-gray-200">
+            Pending
+          </Badge>
+        );
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
-        return "border-l-red-500";
+        return "border-l-red-500 bg-red-50/30";
       case "medium":
-        return "border-l-orange-500";
+        return "border-l-orange-500 bg-orange-50/30";
       default:
-        return "border-l-blue-500";
+        return "border-l-blue-500 bg-blue-50/30";
     }
   };
+
+  const filteredItems = items.filter((item) => {
+    const matchesCategory =
+      selectedCategory === "all" || item.category === selectedCategory;
+    const matchesStatus =
+      selectedStatus === "all" || item.status === selectedStatus;
+    const matchesSearch =
+      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesStatus && matchesSearch;
+  });
 
   const stats = getCompletionStats();
 
@@ -272,26 +317,34 @@ const Checklist = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 to-white">
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
               Immigration Checklist
             </h1>
-            <p className="text-gray-600 mt-2">
+            <p className="text-lg text-gray-600">
               Track your progress through the immigration process
             </p>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
+          <div className="flex gap-3 mt-4 lg:mt-0">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-blue-200 hover:bg-blue-50"
+            >
               <Download className="h-4 w-4 mr-2" />
               Export PDF
             </Button>
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-green-200 hover:bg-green-50"
+            >
               <Printer className="h-4 w-4 mr-2" />
               Print
             </Button>
@@ -299,53 +352,113 @@ const Checklist = () => {
         </div>
 
         {/* Progress Overview */}
-        <Card className="mb-8">
+        <Card className="mb-8 border-0 shadow-lg">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-6">
               <div>
-                <h3 className="text-lg font-semibold">Overall Progress</h3>
-                <p className="text-gray-600">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Overall Progress
+                </h3>
+                <p className="text-lg text-gray-600">
                   {stats.completed} of {stats.total} items completed
                 </p>
               </div>
-              <div className="text-right">
-                <div className="text-3xl font-bold text-blue-600">
+              <div className="text-center lg:text-right">
+                <div className="text-4xl font-bold text-blue-600 mb-2">
                   {Math.round(stats.percentage)}%
                 </div>
+                <Progress
+                  value={stats.percentage}
+                  className="w-full lg:w-64 h-3 mb-2"
+                />
                 <div className="text-sm text-gray-600">Complete</div>
               </div>
             </div>
-            <Progress value={stats.percentage} className="h-3" />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">
-                  {items.filter((i) => i.status === "completed").length}
-                </div>
-                <div className="text-sm text-gray-600">Completed</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-orange-600">
-                  {items.filter((i) => i.status === "in-progress").length}
-                </div>
-                <div className="text-sm text-gray-600">In Progress</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-600">
-                  {items.filter((i) => i.status === "pending").length}
-                </div>
-                <div className="text-sm text-gray-600">Pending</div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="border border-green-200 bg-green-50">
+                <CardContent className="p-4 text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-1">
+                    {items.filter((i) => i.status === "completed").length}
+                  </div>
+                  <div className="text-sm font-medium text-green-700">
+                    Completed
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border border-orange-200 bg-orange-50">
+                <CardContent className="p-4 text-center">
+                  <div className="text-3xl font-bold text-orange-600 mb-1">
+                    {items.filter((i) => i.status === "in-progress").length}
+                  </div>
+                  <div className="text-sm font-medium text-orange-700">
+                    In Progress
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border border-gray-200 bg-gray-50">
+                <CardContent className="p-4 text-center">
+                  <div className="text-3xl font-bold text-gray-600 mb-1">
+                    {items.filter((i) => i.status === "pending").length}
+                  </div>
+                  <div className="text-sm font-medium text-gray-700">
+                    Pending
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </CardContent>
         </Card>
 
+        {/* Filters */}
+        <div className="flex flex-col lg:flex-row gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search checklist items..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-12 border-gray-200 focus:border-blue-500"
+            />
+          </div>
+          <div className="flex gap-2 flex-wrap items-center">
+            <Filter className="h-4 w-4 text-gray-500" />
+            <Label className="text-sm text-gray-600">Category:</Label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+            >
+              <option value="all">All Categories</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+            <Label className="text-sm text-gray-600">Status:</Label>
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+            >
+              {statuses.map((status) => (
+                <option key={status} value={status} className="capitalize">
+                  {status === "all" ? "All Status" : status.replace("-", " ")}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         {/* Checklist by Category */}
         <div className="space-y-8">
           {categories.map((category) => {
-            const categoryItems = items.filter(
+            const categoryItems = filteredItems.filter(
               (item) => item.category === category,
             );
+            if (categoryItems.length === 0) return null;
+
             const completedInCategory = categoryItems.filter(
               (item) => item.status === "completed",
             ).length;
@@ -353,25 +466,31 @@ const Checklist = () => {
               (completedInCategory / categoryItems.length) * 100;
 
             return (
-              <Card key={category}>
-                <CardHeader>
+              <Card key={category} className="border-0 shadow-lg">
+                <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-lg">
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-xl">{category}</CardTitle>
-                      <CardDescription>
+                      <CardTitle className="text-xl flex items-center gap-2">
+                        <Target className="h-5 w-5" />
+                        {category}
+                      </CardTitle>
+                      <CardDescription className="text-blue-100">
                         {completedInCategory} of {categoryItems.length} items
                         completed
                       </CardDescription>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-semibold text-blue-600">
+                      <div className="text-2xl font-bold mb-1">
                         {Math.round(categoryProgress)}%
                       </div>
-                      <Progress value={categoryProgress} className="w-24 h-2" />
+                      <Progress
+                        value={categoryProgress}
+                        className="w-32 h-2 bg-white/20"
+                      />
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-6">
                   <div className="space-y-4">
                     {categoryItems.map((item) => {
                       const Icon = item.icon;
@@ -380,7 +499,7 @@ const Checklist = () => {
                       return (
                         <div
                           key={item.id}
-                          className={`border-l-4 pl-4 py-3 ${getPriorityColor(item.priority)} ${
+                          className={`border-l-4 pl-6 py-4 rounded-r-lg ${getPriorityColor(item.priority)} ${
                             !isEnabled ? "opacity-50" : ""
                           }`}
                         >
@@ -393,13 +512,13 @@ const Checklist = () => {
                             />
 
                             <div className="flex-1">
-                              <div className="flex items-start justify-between mb-2">
-                                <div className="flex items-start gap-3">
-                                  <div className="bg-gray-100 p-2 rounded-lg">
-                                    <Icon className="h-4 w-4 text-gray-600" />
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex items-start gap-4">
+                                  <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-200">
+                                    <Icon className="h-5 w-5 text-gray-600" />
                                   </div>
                                   <div>
-                                    <h4 className="font-medium text-gray-900">
+                                    <h4 className="font-semibold text-lg text-gray-900 mb-1">
                                       {item.title}
                                       {item.isRequired && (
                                         <span className="text-red-500 ml-1">
@@ -407,52 +526,68 @@ const Checklist = () => {
                                         </span>
                                       )}
                                     </h4>
-                                    <p className="text-sm text-gray-600 mt-1">
+                                    <p className="text-gray-600 mb-2">
                                       {item.description}
                                     </p>
+                                    {item.notes && (
+                                      <p className="text-sm text-blue-600 bg-blue-50 p-2 rounded">
+                                        <strong>Note:</strong> {item.notes}
+                                      </p>
+                                    )}
                                   </div>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-3">
                                   {getStatusIcon(item.status)}
                                   {getStatusBadge(item.status)}
                                 </div>
                               </div>
 
-                              <div className="flex items-center justify-between mt-3">
-                                <div className="flex items-center gap-4 text-xs text-gray-500">
-                                  <span>Est. time: {item.estimatedTime}</span>
-                                  <span className="capitalize">
-                                    Priority: {item.priority}
+                              <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-3">
+                                <span className="flex items-center gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  Est. time: {item.estimatedTime}
+                                </span>
+                                <Badge
+                                  variant="outline"
+                                  className={`text-xs ${
+                                    item.priority === "high"
+                                      ? "border-red-200 text-red-600"
+                                      : item.priority === "medium"
+                                        ? "border-orange-200 text-orange-600"
+                                        : "border-blue-200 text-blue-600"
+                                  }`}
+                                >
+                                  {item.priority} priority
+                                </Badge>
+                                {!isEnabled && item.dependencies && (
+                                  <span className="text-orange-600 font-medium">
+                                    Waiting for dependencies
                                   </span>
-                                  {!isEnabled && item.dependencies && (
-                                    <span className="text-orange-600">
-                                      Waiting for dependencies
-                                    </span>
-                                  )}
-                                </div>
+                                )}
                               </div>
 
-                              {item.resources && (
-                                <div className="mt-2">
-                                  <Separator className="my-2" />
+                              {item.resources && item.resources.length > 0 && (
+                                <div className="mb-3">
+                                  <div className="text-xs font-medium text-gray-700 mb-1">
+                                    Resources:
+                                  </div>
                                   <div className="text-xs text-gray-600">
-                                    <span className="font-medium">
-                                      Resources:{" "}
-                                    </span>
-                                    {item.resources.join(" • ")}
+                                    {item.resources.join(" ��� ")}
                                   </div>
                                 </div>
                               )}
 
                               {item.dependencies && !isEnabled && (
-                                <div className="mt-2 p-2 bg-orange-50 rounded text-xs text-orange-700">
-                                  Complete required items first:{" "}
+                                <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-700">
+                                  <strong>Dependencies:</strong> Complete
+                                  required items first:{" "}
                                   {item.dependencies
                                     .map(
                                       (depId) =>
                                         items.find((i) => i.id === depId)
                                           ?.title,
                                     )
+                                    .filter(Boolean)
                                     .join(", ")}
                                 </div>
                               )}
@@ -468,30 +603,67 @@ const Checklist = () => {
           })}
         </div>
 
-        {/* Help Section */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Important Notes</CardTitle>
+        {/* Information Panel */}
+        <Card className="mt-8 border-0 shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-t-lg">
+            <CardTitle className="flex items-center gap-2">
+              <Award className="h-5 w-5" />
+              Important Notes & Guidelines
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-2 text-sm text-gray-600">
-              <p>
-                • Items marked with <span className="text-red-500">*</span> are
-                required for your application
-              </p>
-              <p>
-                • Some items may only be available after receiving an Invitation
-                to Apply (ITA)
-              </p>
-              <p>
-                • Processing times are estimates and may vary depending on your
-                country of residence
-              </p>
-              <p>
-                • Keep all original documents and certified copies for your
-                records
-              </p>
-              <p>• Check for updates regularly as requirements may change</p>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3">
+                  General Information
+                </h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                    Items marked with{" "}
+                    <span className="text-red-500 font-medium">*</span> are
+                    required for your application
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                    Some items may only be available after receiving an
+                    Invitation to Apply (ITA)
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                    Processing times are estimates and may vary by country of
+                    residence
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                    Keep all original documents and certified copies for your
+                    records
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3">
+                  Tips for Success
+                </h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    Start with high-priority items first to avoid delays
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    Check for updates regularly as requirements may change
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    Set reminders for document expiry dates
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    Consider professional help for complex requirements
+                  </li>
+                </ul>
+              </div>
             </div>
           </CardContent>
         </Card>
