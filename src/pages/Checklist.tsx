@@ -25,7 +25,7 @@ import {
   Stethoscope,
   GraduationCap,
   Download,
-  Print,
+  Printer,
 } from "lucide-react";
 
 interface ChecklistItem {
@@ -292,7 +292,7 @@ const Checklist = () => {
               Export PDF
             </Button>
             <Button variant="outline" size="sm">
-              <Print className="h-4 w-4 mr-2" />
+              <Printer className="h-4 w-4 mr-2" />
               Print
             </Button>
           </div>
