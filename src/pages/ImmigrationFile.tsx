@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import {
   Save,
@@ -29,7 +28,8 @@ import {
   MapPin,
   Briefcase,
   GraduationCap,
-  Heart,
+  Globe,
+  FileText,
 } from "lucide-react";
 
 const ImmigrationFile = () => {
@@ -82,44 +82,52 @@ const ImmigrationFile = () => {
   };
 
   const handleSave = () => {
-    // Simulate saving
     toast.success("Immigration file updated successfully!");
     setIsEditing(false);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    // In a real app, you'd reset to the original data
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 to-white">
       <Navbar />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
               Immigration File
             </h1>
-            <p className="text-gray-600 mt-2">
+            <p className="text-lg text-gray-600">
               Manage your personal information and application details
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3 mt-4 lg:mt-0">
             {isEditing ? (
               <>
-                <Button variant="outline" onClick={handleCancel}>
+                <Button
+                  variant="outline"
+                  onClick={handleCancel}
+                  className="border-gray-300"
+                >
                   Cancel
                 </Button>
-                <Button onClick={handleSave}>
+                <Button
+                  onClick={handleSave}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
+                >
                   <Save className="h-4 w-4 mr-2" />
                   Save Changes
                 </Button>
               </>
             ) : (
-              <Button onClick={() => setIsEditing(true)}>
+              <Button
+                onClick={() => setIsEditing(true)}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
+              >
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Information
               </Button>
@@ -128,67 +136,89 @@ const ImmigrationFile = () => {
         </div>
 
         {/* File Status */}
-        <Card className="mb-8">
+        <Card className="mb-8 border-0 shadow-lg">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="bg-blue-100 p-3 rounded-full">
-                  <User className="h-6 w-6 text-blue-600" />
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-xl">
+                  <FileText className="h-8 w-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg">File Status: Active</h3>
+                  <h3 className="font-bold text-xl text-gray-900">
+                    File Status: Active
+                  </h3>
                   <p className="text-gray-600">
                     Last updated: December 15, 2023
                   </p>
                 </div>
               </div>
-              <Badge
-                variant="secondary"
-                className="bg-green-100 text-green-800"
-              >
-                Complete
+              <Badge className="bg-green-100 text-green-800 px-4 py-2 text-sm font-medium">
+                Profile Complete
               </Badge>
             </div>
           </CardContent>
         </Card>
 
         <Tabs defaultValue="personal" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="personal" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-auto p-1 bg-blue-50">
+            <TabsTrigger
+              value="personal"
+              className="flex items-center gap-2 py-3 data-[state=active]:bg-white data-[state=active]:text-blue-600"
+            >
               <User className="h-4 w-4" />
-              Personal
+              <span className="hidden sm:inline">Personal</span>
             </TabsTrigger>
-            <TabsTrigger value="contact" className="flex items-center gap-2">
+            <TabsTrigger
+              value="contact"
+              className="flex items-center gap-2 py-3 data-[state=active]:bg-white data-[state=active]:text-blue-600"
+            >
               <MapPin className="h-4 w-4" />
-              Contact
+              <span className="hidden sm:inline">Contact</span>
             </TabsTrigger>
-            <TabsTrigger value="education" className="flex items-center gap-2">
+            <TabsTrigger
+              value="education"
+              className="flex items-center gap-2 py-3 data-[state=active]:bg-white data-[state=active]:text-blue-600"
+            >
               <GraduationCap className="h-4 w-4" />
-              Education
+              <span className="hidden sm:inline">Education</span>
             </TabsTrigger>
-            <TabsTrigger value="work" className="flex items-center gap-2">
+            <TabsTrigger
+              value="work"
+              className="flex items-center gap-2 py-3 data-[state=active]:bg-white data-[state=active]:text-blue-600"
+            >
               <Briefcase className="h-4 w-4" />
-              Work
+              <span className="hidden sm:inline">Work</span>
             </TabsTrigger>
-            <TabsTrigger value="language" className="flex items-center gap-2">
-              <span className="text-xs">🗣️</span>
-              Language
+            <TabsTrigger
+              value="language"
+              className="flex items-center gap-2 py-3 data-[state=active]:bg-white data-[state=active]:text-blue-600"
+            >
+              <Globe className="h-4 w-4" />
+              <span className="hidden sm:inline">Language</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Personal Information */}
           <TabsContent value="personal">
-            <Card>
-              <CardHeader>
-                <CardTitle>Personal Information</CardTitle>
-                <CardDescription>
+            <Card className="border-0 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  Personal Information
+                </CardTitle>
+                <CardDescription className="text-blue-100">
                   Basic personal details and identification
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="p-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label
+                      htmlFor="firstName"
+                      className="font-medium text-gray-700"
+                    >
+                      First Name
+                    </Label>
                     <Input
                       id="firstName"
                       value={formData.firstName}
@@ -196,10 +226,16 @@ const ImmigrationFile = () => {
                         handleInputChange("firstName", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label
+                      htmlFor="lastName"
+                      className="font-medium text-gray-700"
+                    >
+                      Last Name
+                    </Label>
                     <Input
                       id="lastName"
                       value={formData.lastName}
@@ -207,10 +243,16 @@ const ImmigrationFile = () => {
                         handleInputChange("lastName", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                    <Label
+                      htmlFor="dateOfBirth"
+                      className="font-medium text-gray-700"
+                    >
+                      Date of Birth
+                    </Label>
                     <Input
                       id="dateOfBirth"
                       type="date"
@@ -219,10 +261,16 @@ const ImmigrationFile = () => {
                         handleInputChange("dateOfBirth", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="nationality">Nationality</Label>
+                    <Label
+                      htmlFor="nationality"
+                      className="font-medium text-gray-700"
+                    >
+                      Nationality
+                    </Label>
                     <Input
                       id="nationality"
                       value={formData.nationality}
@@ -230,10 +278,16 @@ const ImmigrationFile = () => {
                         handleInputChange("nationality", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="passportNumber">Passport Number</Label>
+                    <Label
+                      htmlFor="passportNumber"
+                      className="font-medium text-gray-700"
+                    >
+                      Passport Number
+                    </Label>
                     <Input
                       id="passportNumber"
                       value={formData.passportNumber}
@@ -241,10 +295,16 @@ const ImmigrationFile = () => {
                         handleInputChange("passportNumber", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="maritalStatus">Marital Status</Label>
+                    <Label
+                      htmlFor="maritalStatus"
+                      className="font-medium text-gray-700"
+                    >
+                      Marital Status
+                    </Label>
                     <Select
                       value={formData.maritalStatus}
                       onValueChange={(value) =>
@@ -252,7 +312,7 @@ const ImmigrationFile = () => {
                       }
                       disabled={!isEditing}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="mt-1 h-12 border-gray-200 focus:border-blue-500">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -270,15 +330,25 @@ const ImmigrationFile = () => {
 
           {/* Contact Information */}
           <TabsContent value="contact">
-            <Card>
-              <CardHeader>
-                <CardTitle>Contact Information</CardTitle>
-                <CardDescription>Address and contact details</CardDescription>
+            <Card className="border-0 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  Contact Information
+                </CardTitle>
+                <CardDescription className="text-green-100">
+                  Address and contact details
+                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="p-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label
+                      htmlFor="email"
+                      className="font-medium text-gray-700"
+                    >
+                      Email Address
+                    </Label>
                     <Input
                       id="email"
                       type="email"
@@ -287,10 +357,16 @@ const ImmigrationFile = () => {
                         handleInputChange("email", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="phone">Phone Number</Label>
+                    <Label
+                      htmlFor="phone"
+                      className="font-medium text-gray-700"
+                    >
+                      Phone Number
+                    </Label>
                     <Input
                       id="phone"
                       value={formData.phone}
@@ -298,17 +374,23 @@ const ImmigrationFile = () => {
                         handleInputChange("phone", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                 </div>
 
-                <Separator />
-
-                <div className="space-y-4">
-                  <h4 className="font-medium">Address</h4>
-                  <div className="grid grid-cols-1 gap-4">
+                <div className="border-t pt-6">
+                  <h4 className="font-semibold text-lg text-gray-900 mb-4">
+                    Address Information
+                  </h4>
+                  <div className="space-y-4">
                     <div>
-                      <Label htmlFor="address">Street Address</Label>
+                      <Label
+                        htmlFor="address"
+                        className="font-medium text-gray-700"
+                      >
+                        Street Address
+                      </Label>
                       <Input
                         id="address"
                         value={formData.address}
@@ -316,11 +398,17 @@ const ImmigrationFile = () => {
                           handleInputChange("address", e.target.value)
                         }
                         disabled={!isEditing}
+                        className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                       />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <Label htmlFor="city">City</Label>
+                        <Label
+                          htmlFor="city"
+                          className="font-medium text-gray-700"
+                        >
+                          City
+                        </Label>
                         <Input
                           id="city"
                           value={formData.city}
@@ -328,10 +416,16 @@ const ImmigrationFile = () => {
                             handleInputChange("city", e.target.value)
                           }
                           disabled={!isEditing}
+                          className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="province">Province/State</Label>
+                        <Label
+                          htmlFor="province"
+                          className="font-medium text-gray-700"
+                        >
+                          Province/State
+                        </Label>
                         <Input
                           id="province"
                           value={formData.province}
@@ -339,10 +433,16 @@ const ImmigrationFile = () => {
                             handleInputChange("province", e.target.value)
                           }
                           disabled={!isEditing}
+                          className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="postalCode">Postal Code</Label>
+                        <Label
+                          htmlFor="postalCode"
+                          className="font-medium text-gray-700"
+                        >
+                          Postal Code
+                        </Label>
                         <Input
                           id="postalCode"
                           value={formData.postalCode}
@@ -350,19 +450,9 @@ const ImmigrationFile = () => {
                             handleInputChange("postalCode", e.target.value)
                           }
                           disabled={!isEditing}
+                          className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                         />
                       </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="country">Country</Label>
-                      <Input
-                        id="country"
-                        value={formData.country}
-                        onChange={(e) =>
-                          handleInputChange("country", e.target.value)
-                        }
-                        disabled={!isEditing}
-                      />
                     </div>
                   </div>
                 </div>
@@ -372,17 +462,23 @@ const ImmigrationFile = () => {
 
           {/* Education */}
           <TabsContent value="education">
-            <Card>
-              <CardHeader>
-                <CardTitle>Education Background</CardTitle>
-                <CardDescription>
+            <Card className="border-0 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-2">
+                  <GraduationCap className="h-5 w-5" />
+                  Education Background
+                </CardTitle>
+                <CardDescription className="text-purple-100">
                   Educational qualifications and credentials
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="p-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="highestEducation">
+                    <Label
+                      htmlFor="highestEducation"
+                      className="font-medium text-gray-700"
+                    >
                       Highest Level of Education
                     </Label>
                     <Select
@@ -392,7 +488,7 @@ const ImmigrationFile = () => {
                       }
                       disabled={!isEditing}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="mt-1 h-12 border-gray-200 focus:border-blue-500">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -410,7 +506,12 @@ const ImmigrationFile = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="fieldOfStudy">Field of Study</Label>
+                    <Label
+                      htmlFor="fieldOfStudy"
+                      className="font-medium text-gray-700"
+                    >
+                      Field of Study
+                    </Label>
                     <Input
                       id="fieldOfStudy"
                       value={formData.fieldOfStudy}
@@ -418,10 +519,16 @@ const ImmigrationFile = () => {
                         handleInputChange("fieldOfStudy", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="institution">Institution</Label>
+                    <Label
+                      htmlFor="institution"
+                      className="font-medium text-gray-700"
+                    >
+                      Institution
+                    </Label>
                     <Input
                       id="institution"
                       value={formData.institution}
@@ -429,10 +536,16 @@ const ImmigrationFile = () => {
                         handleInputChange("institution", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="graduationYear">Graduation Year</Label>
+                    <Label
+                      htmlFor="graduationYear"
+                      className="font-medium text-gray-700"
+                    >
+                      Graduation Year
+                    </Label>
                     <Input
                       id="graduationYear"
                       value={formData.graduationYear}
@@ -440,6 +553,7 @@ const ImmigrationFile = () => {
                         handleInputChange("graduationYear", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -449,17 +563,25 @@ const ImmigrationFile = () => {
 
           {/* Work Experience */}
           <TabsContent value="work">
-            <Card>
-              <CardHeader>
-                <CardTitle>Work Experience</CardTitle>
-                <CardDescription>
+            <Card className="border-0 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-2">
+                  <Briefcase className="h-5 w-5" />
+                  Work Experience
+                </CardTitle>
+                <CardDescription className="text-orange-100">
                   Employment history and current position
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="p-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="currentJob">Current Job Title</Label>
+                    <Label
+                      htmlFor="currentJob"
+                      className="font-medium text-gray-700"
+                    >
+                      Current Job Title
+                    </Label>
                     <Input
                       id="currentJob"
                       value={formData.currentJob}
@@ -467,10 +589,16 @@ const ImmigrationFile = () => {
                         handleInputChange("currentJob", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="employer">Current Employer</Label>
+                    <Label
+                      htmlFor="employer"
+                      className="font-medium text-gray-700"
+                    >
+                      Current Employer
+                    </Label>
                     <Input
                       id="employer"
                       value={formData.employer}
@@ -478,10 +606,14 @@ const ImmigrationFile = () => {
                         handleInputChange("employer", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="workExperience">
+                    <Label
+                      htmlFor="workExperience"
+                      className="font-medium text-gray-700"
+                    >
                       Years of Work Experience
                     </Label>
                     <Input
@@ -492,6 +624,7 @@ const ImmigrationFile = () => {
                         handleInputChange("workExperience", e.target.value)
                       }
                       disabled={!isEditing}
+                      className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -501,19 +634,29 @@ const ImmigrationFile = () => {
 
           {/* Language Proficiency */}
           <TabsContent value="language">
-            <Card>
-              <CardHeader>
-                <CardTitle>Language Proficiency</CardTitle>
-                <CardDescription>
+            <Card className="border-0 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5" />
+                  Language Proficiency
+                </CardTitle>
+                <CardDescription className="text-indigo-100">
                   Official language test scores (IELTS, CELPIP, TEF, etc.)
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="p-6 space-y-8">
                 <div>
-                  <h4 className="font-medium mb-4">English Proficiency</h4>
+                  <h4 className="font-semibold text-lg text-gray-900 mb-4">
+                    English Proficiency
+                  </h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                      <Label htmlFor="englishListening">Listening</Label>
+                      <Label
+                        htmlFor="englishListening"
+                        className="font-medium text-gray-700"
+                      >
+                        Listening
+                      </Label>
                       <Input
                         id="englishListening"
                         value={formData.englishListening}
@@ -522,10 +665,16 @@ const ImmigrationFile = () => {
                         }
                         disabled={!isEditing}
                         placeholder="0.0"
+                        className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="englishReading">Reading</Label>
+                      <Label
+                        htmlFor="englishReading"
+                        className="font-medium text-gray-700"
+                      >
+                        Reading
+                      </Label>
                       <Input
                         id="englishReading"
                         value={formData.englishReading}
@@ -534,10 +683,16 @@ const ImmigrationFile = () => {
                         }
                         disabled={!isEditing}
                         placeholder="0.0"
+                        className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="englishWriting">Writing</Label>
+                      <Label
+                        htmlFor="englishWriting"
+                        className="font-medium text-gray-700"
+                      >
+                        Writing
+                      </Label>
                       <Input
                         id="englishWriting"
                         value={formData.englishWriting}
@@ -546,10 +701,16 @@ const ImmigrationFile = () => {
                         }
                         disabled={!isEditing}
                         placeholder="0.0"
+                        className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="englishSpeaking">Speaking</Label>
+                      <Label
+                        htmlFor="englishSpeaking"
+                        className="font-medium text-gray-700"
+                      >
+                        Speaking
+                      </Label>
                       <Input
                         id="englishSpeaking"
                         value={formData.englishSpeaking}
@@ -558,20 +719,24 @@ const ImmigrationFile = () => {
                         }
                         disabled={!isEditing}
                         placeholder="0.0"
+                        className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                       />
                     </div>
                   </div>
                 </div>
 
-                <Separator />
-
-                <div>
-                  <h4 className="font-medium mb-4">
+                <div className="border-t pt-6">
+                  <h4 className="font-semibold text-lg text-gray-900 mb-4">
                     French Proficiency (Optional)
                   </h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                      <Label htmlFor="frenchListening">Listening</Label>
+                      <Label
+                        htmlFor="frenchListening"
+                        className="font-medium text-gray-700"
+                      >
+                        Listening
+                      </Label>
                       <Input
                         id="frenchListening"
                         value={formData.frenchListening}
@@ -580,10 +745,16 @@ const ImmigrationFile = () => {
                         }
                         disabled={!isEditing}
                         placeholder="0.0"
+                        className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="frenchReading">Reading</Label>
+                      <Label
+                        htmlFor="frenchReading"
+                        className="font-medium text-gray-700"
+                      >
+                        Reading
+                      </Label>
                       <Input
                         id="frenchReading"
                         value={formData.frenchReading}
@@ -592,10 +763,16 @@ const ImmigrationFile = () => {
                         }
                         disabled={!isEditing}
                         placeholder="0.0"
+                        className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="frenchWriting">Writing</Label>
+                      <Label
+                        htmlFor="frenchWriting"
+                        className="font-medium text-gray-700"
+                      >
+                        Writing
+                      </Label>
                       <Input
                         id="frenchWriting"
                         value={formData.frenchWriting}
@@ -604,10 +781,16 @@ const ImmigrationFile = () => {
                         }
                         disabled={!isEditing}
                         placeholder="0.0"
+                        className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="frenchSpeaking">Speaking</Label>
+                      <Label
+                        htmlFor="frenchSpeaking"
+                        className="font-medium text-gray-700"
+                      >
+                        Speaking
+                      </Label>
                       <Input
                         id="frenchSpeaking"
                         value={formData.frenchSpeaking}
@@ -616,6 +799,7 @@ const ImmigrationFile = () => {
                         }
                         disabled={!isEditing}
                         placeholder="0.0"
+                        className="mt-1 h-12 border-gray-200 focus:border-blue-500"
                       />
                     </div>
                   </div>
