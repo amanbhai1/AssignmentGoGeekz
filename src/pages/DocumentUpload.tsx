@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
   Upload,
@@ -22,6 +24,8 @@ import {
   Trash2,
   Plus,
   Info,
+  Search,
+  Filter,
 } from "lucide-react";
 
 interface Document {
@@ -42,7 +46,7 @@ const DocumentUpload = () => {
       id: "1",
       name: "Passport",
       type: "passport",
-      status: "uploaded",
+      status: "verified",
       description: "Valid passport with at least 6 months remaining validity",
       uploadedDate: "2023-12-10",
       fileName: "passport_john_doe.pdf",
@@ -121,6 +125,7 @@ const DocumentUpload = () => {
   ]);
 
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const categories = [
     "all",
@@ -134,7 +139,6 @@ const DocumentUpload = () => {
   ];
 
   const handleFileUpload = (documentId: string) => {
-    // Simulate file upload
     setDocuments((prev) =>
       prev.map((doc) =>
         doc.id === documentId
@@ -184,22 +188,40 @@ const DocumentUpload = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "verified":
-        return <Badge className="bg-green-100 text-green-800">Verified</Badge>;
+        return (
+          <Badge className="bg-green-100 text-green-800 border-green-200">
+            Verified
+          </Badge>
+        );
       case "uploaded":
-        return <Badge className="bg-blue-100 text-blue-800">Uploaded</Badge>;
+        return (
+          <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+            Uploaded
+          </Badge>
+        );
       case "rejected":
-        return <Badge className="bg-red-100 text-red-800">Rejected</Badge>;
+        return (
+          <Badge className="bg-red-100 text-red-800 border-red-200">
+            Rejected
+          </Badge>
+        );
       default:
         return (
-          <Badge className="bg-orange-100 text-orange-800">Required</Badge>
+          <Badge className="bg-orange-100 text-orange-800 border-orange-200">
+            Required
+          </Badge>
         );
     }
   };
 
-  const filteredDocuments =
-    selectedCategory === "all"
-      ? documents
-      : documents.filter((doc) => doc.category === selectedCategory);
+  const filteredDocuments = documents.filter((doc) => {
+    const matchesCategory =
+      selectedCategory === "all" || doc.category === selectedCategory;
+    const matchesSearch =
+      doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.description.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const uploadedCount = documents.filter(
     (doc) => doc.status === "uploaded" || doc.status === "verified",
@@ -208,43 +230,50 @@ const DocumentUpload = () => {
   const progressPercentage = (uploadedCount / totalCount) * 100;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 to-white">
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Document Upload</h1>
-          <p className="text-gray-600 mt-2">
-            Upload and manage your immigration documents
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Document Upload Center
+          </h1>
+          <p className="text-lg text-gray-600">
+            Upload and manage your immigration documents securely
           </p>
         </div>
 
         {/* Progress Overview */}
-        <Card className="mb-8">
+        <Card className="mb-8 border-0 shadow-lg">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div>
-                <h3 className="text-lg font-semibold">Upload Progress</h3>
-                <p className="text-gray-600">
-                  {uploadedCount} of {totalCount} documents uploaded
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Upload Progress
+                </h3>
+                <p className="text-lg text-gray-600">
+                  {uploadedCount} of {totalCount} documents completed
                 </p>
               </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-blue-600">
+              <div className="text-center lg:text-right">
+                <div className="text-4xl font-bold text-blue-600 mb-2">
                   {Math.round(progressPercentage)}%
                 </div>
+                <Progress
+                  value={progressPercentage}
+                  className="w-full lg:w-48 h-3 mb-2"
+                />
                 <div className="text-sm text-gray-600">Complete</div>
               </div>
             </div>
-            <Progress value={progressPercentage} className="h-2" />
           </CardContent>
         </Card>
 
         {/* Important Information */}
-        <Alert className="mb-6">
-          <Info className="h-4 w-4" />
-          <AlertDescription>
+        <Alert className="mb-6 border-blue-200 bg-blue-50">
+          <Info className="h-4 w-4 text-blue-600" />
+          <AlertDescription className="text-blue-800">
             <strong>Important:</strong> All documents must be in PDF format,
             clear and legible. Maximum file size is 5MB per document.
             Translations must be certified if documents are not in English or
@@ -252,20 +281,33 @@ const DocumentUpload = () => {
           </AlertDescription>
         </Alert>
 
-        {/* Category Filter */}
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2">
+        {/* Search and Filter */}
+        <div className="flex flex-col lg:flex-row gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search documents..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-12 border-gray-200 focus:border-blue-500"
+            />
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-gray-500" />
+              <span className="text-sm text-gray-600">Filter by:</span>
+            </div>
             {categories.map((category) => (
               <Button
                 key={category}
                 variant={selectedCategory === category ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedCategory(category)}
-                className="capitalize"
+                className={`capitalize ${selectedCategory === category ? "bg-blue-600 hover:bg-blue-700" : "border-blue-200 hover:bg-blue-50"}`}
               >
                 {category}
                 {category !== "all" && (
-                  <Badge variant="secondary" className="ml-2">
+                  <Badge variant="secondary" className="ml-2 bg-white/20">
                     {
                       documents.filter((doc) => doc.category === category)
                         .length
@@ -278,43 +320,52 @@ const DocumentUpload = () => {
         </div>
 
         {/* Documents Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredDocuments.map((document) => (
-            <Card key={document.id} className="relative">
+            <Card
+              key={document.id}
+              className="border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+            >
               <CardHeader className="pb-4">
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between mb-2">
                   <div className="flex items-start gap-3">
                     {getStatusIcon(document.status)}
                     <div className="flex-1">
-                      <CardTitle className="text-lg leading-tight">
+                      <CardTitle className="text-lg leading-tight text-gray-900">
                         {document.name}
                       </CardTitle>
-                      <CardDescription className="mt-1">
+                      <CardDescription className="mt-1 text-gray-600">
                         {document.description}
                       </CardDescription>
                     </div>
                   </div>
                   {getStatusBadge(document.status)}
                 </div>
+                <Badge
+                  variant="outline"
+                  className="w-fit text-xs text-blue-600 border-blue-200"
+                >
+                  {document.category}
+                </Badge>
               </CardHeader>
 
               <CardContent className="pt-0">
                 {document.status === "required" ? (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div
-                      className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer"
+                      className="border-2 border-dashed border-blue-300 rounded-xl p-8 text-center hover:border-blue-400 hover:bg-blue-50/50 transition-colors cursor-pointer group"
                       onClick={() => handleFileUpload(document.id)}
                     >
-                      <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">
+                      <Upload className="h-12 w-12 text-blue-400 mx-auto mb-3 group-hover:text-blue-500 transition-colors" />
+                      <p className="text-sm font-medium text-gray-700 mb-1">
                         Click to upload or drag and drop
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500">
                         PDF files only, max 5MB
                       </p>
                     </div>
                     <Button
-                      className="w-full"
+                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white h-12"
                       onClick={() => handleFileUpload(document.id)}
                     >
                       <Plus className="h-4 w-4 mr-2" />
@@ -322,27 +373,40 @@ const DocumentUpload = () => {
                     </Button>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="space-y-4">
+                    <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="font-medium text-sm">
+                        <p className="font-medium text-sm text-gray-900 truncate">
                           {document.fileName}
                         </p>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 ml-2">
                           {document.fileSize}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-600">
-                        Uploaded on {document.uploadedDate}
-                      </p>
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs text-gray-600">
+                          Uploaded: {document.uploadedDate}
+                        </p>
+                        {document.status === "verified" && (
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                        )}
+                      </div>
                     </div>
 
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 border-blue-200 hover:bg-blue-50"
+                      >
                         <Eye className="h-4 w-4 mr-2" />
                         View
                       </Button>
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 border-green-200 hover:bg-green-50"
+                      >
                         <Download className="h-4 w-4 mr-2" />
                         Download
                       </Button>
@@ -350,62 +414,108 @@ const DocumentUpload = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => handleDelete(document.id)}
-                        className="text-red-600 hover:text-red-700"
+                        className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
 
                     {document.status === "rejected" && (
-                      <Alert variant="destructive">
+                      <Alert
+                        variant="destructive"
+                        className="border-red-200 bg-red-50"
+                      >
                         <AlertCircle className="h-4 w-4" />
-                        <AlertDescription>
+                        <AlertDescription className="text-red-700">
                           Document rejected. Please review requirements and
-                          reupload.
+                          re-upload.
                         </AlertDescription>
                       </Alert>
                     )}
                   </div>
                 )}
-
-                <div className="mt-3 pt-3 border-t">
-                  <Badge variant="outline" className="text-xs">
-                    {document.category}
-                  </Badge>
-                </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
         {/* Document Requirements */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Document Requirements</CardTitle>
-            <CardDescription>
-              General guidelines for document submission
+        <Card className="mt-8 border-0 shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-t-lg">
+            <CardTitle>Document Requirements & Guidelines</CardTitle>
+            <CardDescription className="text-indigo-100">
+              Important information for document submission
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
-                <h4 className="font-medium mb-3">Format Requirements</h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li>• PDF format only</li>
-                  <li>• Maximum file size: 5MB</li>
-                  <li>• Clear and legible scans</li>
-                  <li>• Color or high-quality black and white</li>
+                <h4 className="font-semibold text-lg text-gray-900 mb-4">
+                  Format Requirements
+                </h4>
+                <ul className="space-y-2 text-gray-600">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    PDF format only
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Maximum file size: 5MB
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Clear and legible scans
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Color or high-quality B&W
+                  </li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium mb-3">Translation Requirements</h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li>
-                    • Certified translations for non-English/French documents
+                <h4 className="font-semibold text-lg text-gray-900 mb-4">
+                  Translation Requirements
+                </h4>
+                <ul className="space-y-2 text-gray-600">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Certified translations required
                   </li>
-                  <li>• Include both original and translated versions</li>
-                  <li>• Translator's certification required</li>
-                  <li>• Official letterhead preferred</li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Include original + translation
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Translator certification needed
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Official letterhead preferred
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-lg text-gray-900 mb-4">
+                  Security & Privacy
+                </h4>
+                <ul className="space-y-2 text-gray-600">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    End-to-end encryption
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Secure cloud storage
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Privacy compliance
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    24/7 monitoring
+                  </li>
                 </ul>
               </div>
             </div>
