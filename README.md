@@ -319,8 +319,8 @@ This project is licensed under the MIT License.
 ## 👨‍💻 Developer
 
 **Aman Gupta**
-- Email: [your-email@example.com]
-- GitHub: [your-github-profile]
+- Email: [amangupta121@gmail.com]
+- GitHub: [https://github.com/amanbhai1]
 
 ## 🎯 Test Assignment Completion
 
