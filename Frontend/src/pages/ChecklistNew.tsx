@@ -40,6 +40,7 @@ import {
   Target,
   Award,
   Upload,
+  CheckSquare,
 } from "lucide-react";
 import checklistService, { ChecklistItem } from "@/services/checklistService";
 
@@ -215,13 +216,16 @@ const ChecklistNew = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50/50 to-white">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading checklist...</p>
+              <div className="relative">
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
+                <CheckSquare className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-blue-600" />
+              </div>
+              <p className="text-gray-600 font-medium">Loading your checklist...</p>
             </div>
           </div>
         </div>
@@ -230,38 +234,56 @@ const ChecklistNew = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Immigration Checklist
-            </h1>
-            <p className="text-lg text-gray-600">
-              Track your progress through the immigration process
-            </p>
-          </div>
-          <div className="flex gap-3 mt-4 lg:mt-0">
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Item
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New Checklist Item</DialogTitle>
-                  <DialogDescription>
+        <div className="relative overflow-hidden">
+          <Card className="border-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white shadow-2xl">
+            <CardContent className="p-8 relative">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
+              
+              <div className="relative z-10">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-white/20 p-3 rounded-xl">
+                        <CheckSquare className="h-8 w-8 text-white" />
+                      </div>
+                      <div>
+                        <h1 className="text-4xl font-bold">
+                          Immigration Checklist
+                        </h1>
+                        <p className="text-blue-100 text-lg">
+                          Track your progress through the immigration process
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-3 mt-6 lg:mt-0">
+                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button className="bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-sm rounded-xl transition-all duration-300">
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Item
+                        </Button>
+                      </DialogTrigger>
+              <DialogContent className="bg-white/95 backdrop-blur-xl border-gray-200/50 shadow-2xl rounded-2xl max-w-md">
+                <DialogHeader className="space-y-3">
+                  <DialogTitle className="text-xl font-bold text-gray-900 flex items-center">
+                    <Plus className="h-5 w-5 mr-2 text-blue-600" />
+                    Add New Checklist Item
+                  </DialogTitle>
+                  <DialogDescription className="text-gray-600">
                     Create a new item to track in your immigration checklist.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Title *</Label>
+                <div className="space-y-6 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title" className="text-sm font-medium text-gray-700">Title *</Label>
                     <Input
                       id="title"
                       value={newItem.title}
@@ -269,10 +291,11 @@ const ChecklistNew = () => {
                         setNewItem({ ...newItem, title: e.target.value })
                       }
                       placeholder="Enter item title"
+                      className="h-11 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="description">Description</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="description" className="text-sm font-medium text-gray-700">Description</Label>
                     <Textarea
                       id="description"
                       value={newItem.description}
@@ -280,10 +303,11 @@ const ChecklistNew = () => {
                         setNewItem({ ...newItem, description: e.target.value })
                       }
                       placeholder="Enter item description"
+                      className="min-h-[80px] border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 resize-none"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="dueDate">Due Date</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="dueDate" className="text-sm font-medium text-gray-700">Due Date</Label>
                     <Input
                       id="dueDate"
                       type="date"
@@ -291,10 +315,11 @@ const ChecklistNew = () => {
                       onChange={(e) =>
                         setNewItem({ ...newItem, dueDate: e.target.value })
                       }
+                      className="h-11 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="notes">Notes</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="notes" className="text-sm font-medium text-gray-700">Notes</Label>
                     <Textarea
                       id="notes"
                       value={newItem.notes}
@@ -302,45 +327,57 @@ const ChecklistNew = () => {
                         setNewItem({ ...newItem, notes: e.target.value })
                       }
                       placeholder="Additional notes"
+                      className="min-h-[80px] border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 resize-none"
                     />
                   </div>
                 </div>
-                <DialogFooter>
+                <DialogFooter className="gap-3">
                   <Button
                     variant="outline"
                     onClick={() => setIsAddDialogOpen(false)}
+                    className="border-gray-200 hover:bg-gray-50 rounded-xl transition-all duration-300"
                   >
                     Cancel
                   </Button>
-                  <Button onClick={handleAddItem}>Add Item</Button>
+                  <Button 
+                    onClick={handleAddItem}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl transition-all duration-300"
+                  >
+                    Add Item
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-blue-200 hover:bg-blue-50"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export PDF
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-green-200 hover:bg-green-50"
-            >
-              <Printer className="h-4 w-4 mr-2" />
-              Print
-            </Button>
-          </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-white/30 text-white hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all duration-300"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Export PDF
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-white/30 text-white hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all duration-300"
+                    >
+                      <Printer className="h-4 w-4 mr-2" />
+                      Print
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Progress Overview */}
-        <Card className="mb-8 border-0 shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-6">
-              <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+        <Card className="border-0 bg-white/70 backdrop-blur-sm shadow-xl">
+          <CardContent className="p-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold text-gray-900 flex items-center">
+                  <Target className="h-6 w-6 mr-3 text-blue-600" />
                   Overall Progress
                 </h3>
                 <p className="text-lg text-gray-600">
@@ -348,20 +385,23 @@ const ChecklistNew = () => {
                 </p>
               </div>
               <div className="text-center lg:text-right">
-                <div className="text-4xl font-bold text-blue-600 mb-2">
+                <div className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
                   {Math.round(stats.percentage)}%
                 </div>
                 <Progress
                   value={stats.percentage}
-                  className="w-full lg:w-64 h-3 mb-2"
+                  className="w-full lg:w-64 h-4 mb-2"
                 />
-                <div className="text-sm text-gray-600">Complete</div>
+                <div className="text-sm text-gray-600 font-medium">Complete</div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="border border-green-200 bg-green-50">
-                <CardContent className="p-4 text-center">
+              <Card className="border-0 bg-gradient-to-br from-green-50 to-emerald-50 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                <CardContent className="p-6 text-center">
+                  <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-3 rounded-xl inline-flex mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <CheckCircle className="h-6 w-6 text-white" />
+                  </div>
                   <div className="text-3xl font-bold text-green-600 mb-1">
                     {items.filter((i) => i.isCompleted).length}
                   </div>
@@ -370,8 +410,12 @@ const ChecklistNew = () => {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="border border-orange-200 bg-orange-50">
-                <CardContent className="p-4 text-center">
+              
+              <Card className="border-0 bg-gradient-to-br from-orange-50 to-amber-50 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                <CardContent className="p-6 text-center">
+                  <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-3 rounded-xl inline-flex mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <Clock className="h-6 w-6 text-white" />
+                  </div>
                   <div className="text-3xl font-bold text-orange-600 mb-1">
                     {items.filter((i) => !i.isCompleted).length}
                   </div>
@@ -380,8 +424,12 @@ const ChecklistNew = () => {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="border border-blue-200 bg-blue-50">
-                <CardContent className="p-4 text-center">
+              
+              <Card className="border-0 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                <CardContent className="p-6 text-center">
+                  <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-xl inline-flex mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <FileText className="h-6 w-6 text-white" />
+                  </div>
                   <div className="text-3xl font-bold text-blue-600 mb-1">
                     {stats.total}
                   </div>
@@ -395,38 +443,42 @@ const ChecklistNew = () => {
         </Card>
 
         {/* Search */}
-        <div className="mb-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search checklist items..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </div>
+        <Card className="border-0 bg-white/70 backdrop-blur-sm shadow-lg">
+          <CardContent className="p-6">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Input
+                placeholder="Search checklist items..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 h-12 border-0 bg-gray-50/50 rounded-xl text-base focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+              />
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Checklist Items */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {filteredItems.length === 0 ? (
-            <Card className="border-0 shadow-lg">
-              <CardContent className="p-8 text-center">
-                <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <Card className="border-0 bg-white/70 backdrop-blur-sm shadow-xl">
+              <CardContent className="p-12 text-center">
+                <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-6 rounded-2xl inline-flex mb-6">
+                  <FileText className="h-12 w-12 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   No checklist items found
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 mb-6 max-w-md mx-auto">
                   {searchTerm
-                    ? "No items match your search criteria."
-                    : "Get started by adding your first checklist item."}
+                    ? "No items match your search criteria. Try adjusting your search terms."
+                    : "Get started by adding your first checklist item to track your immigration progress."}
                 </p>
                 {!searchTerm && (
                   <Button
                     onClick={() => setIsAddDialogOpen(true)}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl px-8 py-3"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="h-5 w-5 mr-2" />
                     Add First Item
                   </Button>
                 )}
@@ -436,38 +488,42 @@ const ChecklistNew = () => {
             filteredItems.map((item) => (
               <Card
                 key={item._id}
-                className={`border-0 shadow-lg transition-all duration-300 hover:shadow-xl ${
-                  item.isCompleted ? "bg-green-50/30" : ""
+                className={`border-0 bg-white/70 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 group ${
+                  item.isCompleted ? "ring-2 ring-green-200/50" : ""
                 }`}
               >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <Checkbox
-                      checked={item.isCompleted}
-                      onCheckedChange={() =>
-                        toggleItemStatus(item._id, item.isCompleted)
-                      }
-                      className="mt-1"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
+                    <div className="flex-shrink-0 mt-1">
+                      <Checkbox
+                        checked={item.isCompleted}
+                        onCheckedChange={() =>
+                          toggleItemStatus(item._id, item.isCompleted)
+                        }
+                        className="h-5 w-5 rounded-lg data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1 min-w-0">
                           <h3
-                            className={`text-lg font-semibold ${
+                            className={`text-lg font-semibold transition-all duration-300 ${
                               item.isCompleted
                                 ? "text-gray-500 line-through"
-                                : "text-gray-900"
+                                : "text-gray-900 group-hover:text-blue-600"
                             }`}
                           >
                             {item.title}
                           </h3>
                           {item.description && (
-                            <p className="text-gray-600 mt-1">
+                            <p className={`mt-2 text-sm ${
+                              item.isCompleted ? "text-gray-400" : "text-gray-600"
+                            }`}>
                               {item.description}
                             </p>
                           )}
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 ml-4">
                           {getStatusBadge(item.isCompleted)}
                           <Button
                             variant="ghost"
@@ -483,6 +539,7 @@ const ChecklistNew = () => {
                               });
                               setIsEditDialogOpen(true);
                             }}
+                            className="hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-all duration-300"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -490,22 +547,31 @@ const ChecklistNew = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteItem(item._id)}
-                            className="text-red-600 hover:text-red-700"
+                            className="hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-300"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
-                        <div className="flex items-center gap-1">
+                      
+                      <div className="flex items-center gap-6 text-sm">
+                        <div className="flex items-center gap-2 text-gray-500">
                           <Calendar className="h-4 w-4" />
                           <span>Due: {formatDate(item.dueDate)}</span>
                         </div>
-                        {getStatusIcon(item.isCompleted)}
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(item.isCompleted)}
+                          <span className={`text-sm font-medium ${
+                            item.isCompleted ? "text-green-600" : "text-orange-600"
+                          }`}>
+                            {item.isCompleted ? "Completed" : "Pending"}
+                          </span>
+                        </div>
                       </div>
+                      
                       {item.notes && (
-                        <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                          <p className="text-sm text-gray-700">{item.notes}</p>
+                        <div className="mt-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl border border-gray-200/50">
+                          <p className="text-sm text-gray-700 leading-relaxed">{item.notes}</p>
                         </div>
                       )}
                     </div>
@@ -518,17 +584,20 @@ const ChecklistNew = () => {
 
         {/* Edit Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Checklist Item</DialogTitle>
-              <DialogDescription>
+          <DialogContent className="bg-white/95 backdrop-blur-xl border-gray-200/50 shadow-2xl rounded-2xl max-w-md">
+            <DialogHeader className="space-y-3">
+              <DialogTitle className="text-xl font-bold text-gray-900 flex items-center">
+                <Edit className="h-5 w-5 mr-2 text-blue-600" />
+                Edit Checklist Item
+              </DialogTitle>
+              <DialogDescription className="text-gray-600">
                 Update the details of your checklist item.
               </DialogDescription>
             </DialogHeader>
             {editingItem && (
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="edit-title">Title *</Label>
+              <div className="space-y-6 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-title" className="text-sm font-medium text-gray-700">Title *</Label>
                   <Input
                     id="edit-title"
                     value={editingItem.title}
@@ -536,10 +605,11 @@ const ChecklistNew = () => {
                       setEditingItem({ ...editingItem, title: e.target.value })
                     }
                     placeholder="Enter item title"
+                    className="h-11 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="edit-description">Description</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-description" className="text-sm font-medium text-gray-700">Description</Label>
                   <Textarea
                     id="edit-description"
                     value={editingItem.description || ""}
@@ -550,10 +620,11 @@ const ChecklistNew = () => {
                       })
                     }
                     placeholder="Enter item description"
+                    className="min-h-[80px] border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 resize-none"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="edit-dueDate">Due Date</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-dueDate" className="text-sm font-medium text-gray-700">Due Date</Label>
                   <Input
                     id="edit-dueDate"
                     type="date"
@@ -564,10 +635,11 @@ const ChecklistNew = () => {
                         dueDate: e.target.value,
                       })
                     }
+                    className="h-11 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="edit-notes">Notes</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-notes" className="text-sm font-medium text-gray-700">Notes</Label>
                   <Textarea
                     id="edit-notes"
                     value={editingItem.notes || ""}
@@ -575,18 +647,25 @@ const ChecklistNew = () => {
                       setEditingItem({ ...editingItem, notes: e.target.value })
                     }
                     placeholder="Additional notes"
+                    className="min-h-[80px] border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 resize-none"
                   />
                 </div>
               </div>
             )}
-            <DialogFooter>
+            <DialogFooter className="gap-3">
               <Button
                 variant="outline"
                 onClick={() => setIsEditDialogOpen(false)}
+                className="border-gray-200 hover:bg-gray-50 rounded-xl transition-all duration-300"
               >
                 Cancel
               </Button>
-              <Button onClick={handleEditItem}>Update Item</Button>
+              <Button 
+                onClick={handleEditItem}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl transition-all duration-300"
+              >
+                Update Item
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

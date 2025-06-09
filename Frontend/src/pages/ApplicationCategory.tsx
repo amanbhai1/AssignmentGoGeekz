@@ -28,6 +28,7 @@ import {
   Plane,
   Scroll,
   ClipboardList,
+  Folder,
 } from "lucide-react";
 import applicationCategoryService, {
   ApplicationCategory,
@@ -173,13 +174,16 @@ const ApplicationCategoryNew = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50/50 to-white">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading application categories...</p>
+              <div className="relative">
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
+                <Folder className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-blue-600" />
+              </div>
+              <p className="text-gray-600 font-medium">Loading application categories...</p>
             </div>
           </div>
         </div>
@@ -188,28 +192,58 @@ const ApplicationCategoryNew = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Application Categories
-          </h1>
-          <p className="text-lg text-gray-600">
-            Choose the immigration program that best fits your profile and goals
-          </p>
+        <div className="relative overflow-hidden">
+          <Card className="border-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white shadow-2xl">
+            <CardContent className="p-8 relative">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="bg-white/20 p-4 rounded-xl">
+                    <Folder className="h-8 w-8 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-4xl font-bold">
+                      Application Categories
+                    </h1>
+                    <p className="text-blue-100 text-lg">
+                      Choose the immigration program that best fits your profile and goals
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-6 text-sm">
+                  <div className="flex items-center space-x-2">
+                    <Globe className="h-4 w-4 text-blue-200" />
+                    <span className="text-blue-100">Multiple Programs Available</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Target className="h-4 w-4 text-blue-200" />
+                    <span className="text-blue-100">Expert Guidance</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Award className="h-4 w-4 text-blue-200" />
+                    <span className="text-blue-100">Success Guaranteed</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Current Selection Alert */}
         {selectedCat && (
-          <Alert className="mb-6 border-blue-200 bg-blue-50">
-            <CheckCircle className="h-4 w-4 text-blue-600" />
-            <AlertDescription className="text-blue-800">
+          <Alert className="border-0 bg-gradient-to-r from-green-50 to-emerald-50 shadow-lg rounded-2xl">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            <AlertDescription className="text-green-800 font-medium">
               <strong>Currently Selected:</strong> {selectedCat.name} program.
-              You can change your selection at any time before submitting your
-              application.
+              You can change your selection at any time before submitting your application.
             </AlertDescription>
           </Alert>
         )}
