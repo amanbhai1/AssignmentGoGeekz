@@ -1,6 +1,6 @@
 # Immigration Client Portal
 
-A comprehensive client-facing portal for the immigration industry built with React.js and Node.js/Express.js.
+A comprehensive client-facing portal for the immigration industry built with TypeScript and Node.js/Express.js.
 
 ## 🚀 Features
 
@@ -31,7 +31,7 @@ A comprehensive client-facing portal for the immigration industry built with Rea
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React.js 18** - Modern React with hooks
+- **TypeScript 18** - Modern React with hooks
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first CSS framework
 - **Vite** - Fast build tool
@@ -56,7 +56,7 @@ A comprehensive client-facing portal for the immigration industry built with Rea
 
 ```
 AssignmentGoGeekz/
-├── Frontend/                 # React.js frontend
+├── Frontend/                 # TypeScript frontend
 │   ├── src/
 │   │   ├── components/      # Reusable UI components
 │   │   ├── contexts/        # React contexts (Auth)
@@ -331,7 +331,7 @@ This project is licensed under the MIT License.
 3. **Document Upload per File** ✅
 4. **Application Category Selection** ✅
 5. **Checklist with Checkboxes** ✅
-6. **React.js Frontend** ✅
+6. **TypeScript Frontend** ✅
 7. **Node.js/Express.js Backend** ✅
 8. **Tailwind CSS** ✅
 9. **Login Persistence** ✅
